@@ -1,20 +1,19 @@
 import pandas as pd
-from sklearn.linear_model import LinearRegression
+import numpy as np
 
 def get_data():
-    file_path = "../MTFCDataMasterSheet.xlsx"
-    df = pd.read_excel(file_path, sheet_name="Analysis")  # Read the sheet into a DataFrame
+    file_path = "MTFCDataMasterSheet.xlsx"
+    df = pd.read_excel(file_path, sheet_name="DailyPrice")
     return df
 
 # Get and print the table
 df = get_data()
 print(df.to_string())  # Prints all rows and columns without truncation
 
-# Fit a linear regression model for cells with NM data
-for col in df.columns:
-    for row in df[col]:
-        if row == "NM":
-            # Fit a linear regression model
-            model = LinearRegression()
-            model.fit(3,8)
-            print(model.coef_)
+# Monte Carlo Simulation for each stock
+sims = 10000
+
+# AAPL
+aapl = df["AAPL"]
+aapl_returns = aapl.pct_change()
+print(aapl_returns)
