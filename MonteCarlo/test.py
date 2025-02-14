@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 
 def get_data():
-    file_path = "/Users/anshu/Downloads/MTFCDataMasterSheet.xlsx"
+    file_path = "../MTFCDataMasterSheet.xlsx"
     df = pd.read_excel(file_path, sheet_name="Analysis")  # Read the sheet into a DataFrame
     return df
 
