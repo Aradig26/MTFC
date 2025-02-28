@@ -87,18 +87,35 @@ start_date = (datetime.now() - timedelta(days=10*365)).strftime('%Y-%m-%d') # 10
 results_list = []
 
 # Define different numbers of simulations to run
-simulations_list = [50000]
+simulations_list = [1, 10, 100, 1000, 10000, 20000, 50000, 100000]
 
 # Loop through each ticker and each simulation count
 for ticker in tickers:
+    simulation = MonteCarlo(ticker, start_date, end_date, 
+                                (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days, 1)
+    results_list.append({
+            "Ticker": ticker,
+            "Simulations": -1,
+            "Mean Price": simulation.last_price
+        })
     for sims in simulations_list:
         simulation = MonteCarlo(ticker, start_date, end_date, 
                                 (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days, sims)
         
         prices = simulation.simulation_df.iloc[-1]  # Extract last row (final simulated prices)
+        mean_price = np.mean(prices)  # Compute mean expected price
+        print(f"{ticker} expected price for {simulation.noOfDays} days later is: {mean_price} compared to the last price of {simulation.last_price} with {sims} simulations")
+        # Store the result in a dictionary
+        results_list.append({
+            "Ticker": ticker,
+            "Simulations": sims,
+            "Mean Price": mean_price
+        })
+
         stdev = np.std(prices)
         print(f"Standard deviation for {ticker} is {stdev}")
 
+        
 # Convert list of results into a DataFrame
 results_df = pd.DataFrame(results_list)
 
