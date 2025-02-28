@@ -77,20 +77,35 @@ class MonteCarlo():
         
 
 # Define your list of tickers
-tickers = ["GOOGL",	"AMZN",	"AAPL",	"BRK-A", "AVGO", "LLY", "JPM", "MA", "META", "MSFT", "NVDA", "^SPX", "TSLA", "UNH", "V", "WMT"]
+tickers = ["GOOGL", "AMZN", "AAPL", "BRK-A", "AVGO", "LLY", "JPM", "MA", 
+           "META", "MSFT", "NVDA", "^SPX", "TSLA", "UNH", "V", "WMT"]
 
-end_date = (datetime.now() - timedelta(days=5*365)).strftime('%Y-%m-%d')  # Today's date in YYYY-MM-DD format
-start_date = (datetime.now() - timedelta(days=10*365)).strftime('%Y-%m-%d')
+end_date = (datetime.now() - timedelta(days=5*365)).strftime('%Y-%m-%d')  # 5 years ago
+start_date = (datetime.now() - timedelta(days=10*365)).strftime('%Y-%m-%d') # 10 years ago
 
+# Store results in a list of dictionaries
+results_list = []
 
-# Initialize a dictionary to hold your results
-results = {}
+# Define different numbers of simulations to run
+simulations_list = [50000]
 
-# Loop through each ticker and run the simulation
+# Loop through each ticker and each simulation count
 for ticker in tickers:
-    simulation = MonteCarlo(ticker, start_date, end_date, (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days, 1000)
-    simulation.results()
+    for sims in simulations_list:
+        simulation = MonteCarlo(ticker, start_date, end_date, 
+                                (datetime.strptime(end_date, '%Y-%m-%d') - datetime.strptime(start_date, '%Y-%m-%d')).days, sims)
+        
+        prices = simulation.simulation_df.iloc[-1]  # Extract last row (final simulated prices)
+        stdev = np.std(prices)
+        print(f"Standard deviation for {ticker} is {stdev}")
 
+# Convert list of results into a DataFrame
+results_df = pd.DataFrame(results_list)
 
+# Print the table
+print(results_df.to_string(index=False))  # Print without index
+
+# Save the results to a CSV file
+results_df.to_csv("monte_carlo_results.csv", index=False)  # Save without index
 
     
